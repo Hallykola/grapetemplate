@@ -59,12 +59,17 @@ $data = $result->fetch_assoc();
  $json_response = json_encode($response);
  echo $json_response;
 }else{
-    $response['id'] = '';
- $response['gjs-assets'] = '' ;
- $response['gjs-components'] = '';
- $response['gjs-css'] = '';
- $response['gjs-html'] = '';
- $response['gjs-styles'] = '';
+    $sql = "SELECT * FROM `data_raw` ";
+    $statement = $conn->prepare($sql);
+    $statement->execute();
+    $data = $statement->get_result()->num_rows;
+
+    $response['id'] = $data+1;
+ $response['gjs-assets'] = "''" ;
+ $response['gjs-components'] = "''";
+ $response['gjs-css'] = "''";
+ $response['gjs-html'] = "''";
+ $response['gjs-styles'] = "''";
  
  $json_response = json_encode($response);
  echo $json_response;
