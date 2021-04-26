@@ -9,7 +9,7 @@
 // dbconfiguration offline
     $servername = "localhost";
     $username = "root";
-    $password = "Ubermish";
+    $password = "";
     $dbname ="grape";
 // dbconnection
 $conn = new mysqli($servername, $username, $password, $dbname);

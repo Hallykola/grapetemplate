@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.16.45/grapes.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.16.45/css/grapes.min.css">
+        <script src="./grapesjs-blocks-basic.min.js"></script>
+    </head>
+    <body>
+      <div class="panel__top">
+        <div class="panel__basic-actions"></div>
+        <div class="panel__switcher"></div>
+      </div>    
+      <div class="editor-row">
+        <div class="editor-canvas">
+          <div id="gjs"></div>
+        </div>
+        <div class="panel__right">
+          <div class="layers-container"></div>
+          <div class="styles-container"></div>
+        </div>
+      </div>
+      <div id="blocks">
+
+      </div>
+          
+          
+          
+      <script>
+          const editor = grapesjs.init({
+            // Indicate where to init the editor. You can also pass an HTMLElement
+            container: '#gjs',
+            // Get the content for the canvas directly from the element
+            // As an alternative we could use: `components: '<h1>Hello World Component!</h1>'`,
+            
+              plugins: ["gjs-blocks-basic"],
+              pluginsOpts: {
+                "gjs-blocks-basic": {
+                  /* ...options */
+                  blocks: ['column1', 'column2', 'column3', 'column3-7', 'text', 'image','map']
+                }
+              },
+              style: '.txt-red{color: red}',
+                fromElement: true,
+                // Size of the editor
+                height: '300px',
+                width: 'auto',
+
+                storageManager: {
+                  type: 'remote',
+                  stepsBeforeSave: 1,
+                  autosave: true,         // Store data automatically
+                  autoload: true,
+                  urlStore: './store.php',
+                  <?php
+                  if (isset($_REQUEST['ref'])){
+                   echo " urlLoad: '\./load.php?id=".$_REQUEST['ref']."',
+                    params: { id: ".$_REQUEST['ref']." },";
+                  }else{
+                    echo " urlLoad: '\./load.php',
+                    params: {  },";
+                  }
+                  ?>
+                  
+                  contentTypeJson: true,
+                  storeComponents: true,
+                  storeStyles: true,
+                  storeHtml: true,
+                  storeCss: true,
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                },
+                layerManager: {
+                  appendTo: '.layers-container'
+                },
+                  
+                  panels: {
+                    defaults: [{
+                      id: 'layers',
+                      el: '.panel__right',
+                      // Make the panel resizable
+                      resizable: {
+                        maxDim: 350,
+                        minDim: 200,
+                        tc: 0, // Top handler
+                        cl: 1, // Left handler
+                        cr: 0, // Right handler
+                        bc: 0, // Bottom handler
+                        // Being a flex child we need to change `flex-basis` property
+                        // instead of the `width` (default)
+                        keyWidth: 'flex-basis',
+                      },
+                    },
+                    {
+                    id: 'panel-switcher',
+                    el: '.panel__switcher',
+                    buttons: [{
+                        id: 'show-layers',
+                        active: true,
+                        label: 'Layers',
+                        command: 'show-layers',
+                        // Once activated disable the possibility to turn it off
+                        togglable: false,
+                      }, {
+                        id: 'show-style',
+                        active: true,
+                        label: 'Styles',
+                        command: 'show-styles',
+                        togglable: false,
+                    }
+                    ]},
+                  ]
+                  },
+                  selectorManager: {
+      appendTo: '.styles-container'
+    },
+    styleManager: {
+      appendTo: '.styles-container',
+      sectors: [{
+          name: 'Dimension',
+          open: false,
+          // Use built-in properties
+          buildProps: ['width', 'min-height', 'padding'],
+          // Use `properties` to define/override single property
+          properties: [
+            {
+              // Type of the input,
+              // options: integer | radio | select | color | slider | file | composite | stack
+              type: 'integer',
+              name: 'The width', // Label for the property
+              property: 'width', // CSS property (if buildProps contains it will be extended)
+              units: ['px', '%'], // Units, available only for 'integer' types
+              defaults: 'auto', // Default value
+              min: 0, // Min value, available only for 'integer' types
+            }
+          ]
+        },{
+          name: 'Extra',
+          open: false,
+          buildProps: ['background-color', 'box-shadow', 'custom-prop'],
+          properties: [
+            {
+              id: 'custom-prop',
+              name: 'Custom Label',
+              property: 'font-size',
+              type: 'select',
+              defaults: '32px',
+              // List of options, available only for 'select' and 'radio'  types
+              options: [
+                { value: '12px', name: 'Tiny' },
+                { value: '18px', name: 'Medium' },
+                { value: '32px', name: 'Big' },
+              ],
+          }
+          ]
+        }]
+    },
+
+                  blockManager: {
+      appendTo: '#blocks',
+      blocks: [
+        
+        {
+          id: 'section', // id is mandatory
+          label: '<b>Section</b>', // You can use HTML/SVG inside labels
+          attributes: { class:'gjs-block-section' },
+          content: `<section>
+            <h1>This is a simple title</h1>
+            <div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
+          </section>`,
+        },
+        {
+          id: 'Two Columns', // id is mandatory
+          label: '<b>2 columns</b>', // You can use HTML/SVG inside labels
+          attributes: { class:'gjs-block-section' },
+          content: `<div class="row" data-gjs-droppable=".row-cell" data-gjs-custom-name="Row">
+        <div class="row-cell" data-gjs-draggable=".row"></div>
+        <div class="row-cell" data-gjs-draggable=".row"></div>
+      </div>`,
+        },
+        {
+          id: 'text',
+          label: 'Texty test',
+          content: '<div data-gjs-type="text">Insert your text here</div>',
+        }, {
+          id: 'image',
+          label: 'Image',
+          // Select the component once it's dropped
+          select: true,
+          // You can pass components as a JSON instead of a simple HTML string,
+          // in this case we also use a defined component type `image`
+          content: { type: 'image' },
+          // This triggers `active` event on dropped components and the `image`
+          // reacts by opening the AssetManager
+          activate: true,
+        }
+      ]
+    },
+              }
+
+              );
+              editor.Panels.addPanel({
+    id: 'panel-top',
+    el: '.panel__top',
+  });
+  editor.Panels.addPanel({
+    id: 'basic-actions',
+    el: '.panel__basic-actions',
+    buttons: [
+      {
+        id: 'visibility',
+        active: true, // active by default
+        className: 'btn-toggle-borders',
+        label: '<u>B</u>',
+        command: 'sw-visibility', // Built-in command
+      }, {
+        id: 'export',
+        className: 'btn-open-export',
+        label: 'Exp',
+        command: 'export-template',
+        context: 'export-template', // For grouping context of buttons from the same panel
+      }, {
+        id: 'show-json',
+        className: 'btn-show-json',
+        label: 'JSON',
+        context: 'show-json',
+        command(editor) {
+          editor.Modal.setTitle('Components JSON')
+            .setContent(`<textarea style="width:100%; height: 250px;">
+              ${JSON.stringify(editor.getComponents())}
+            </textarea>`)
+            .open();
+        },
+      }
+    ],
+  });
+  editor.on('run:export-template:before', opts => {
+    console.log('Before the command run');
+    if (0 /* some condition */) {
+      opts.abort = 1;
+    }
+  });
+  editor.on('run:export-template', () => console.log('After the command run'));
+  editor.on('abort:export-template', () => console.log('Command aborted'));
+  // Define commands
+  editor.Commands.add('show-layers', {
+    getRowEl(editor) { return editor.getContainer().closest('.editor-row'); },
+    getLayersEl(row) { return row.querySelector('.layers-container') },
+
+    run(editor, sender) {
+      const lmEl = this.getLayersEl(this.getRowEl(editor));
+      lmEl.style.display = '';
+    },
+    stop(editor, sender) {
+      const lmEl = this.getLayersEl(this.getRowEl(editor));
+      lmEl.style.display = 'none';
+    },
+  });
+  editor.Commands.add('show-styles', {
+    getRowEl(editor) { return editor.getContainer().closest('.editor-row'); },
+    getStyleEl(row) { return row.querySelector('.styles-container') },
+
+    run(editor, sender) {
+      const smEl = this.getStyleEl(this.getRowEl(editor));
+      smEl.style.display = '';
+    },
+    stop(editor, sender) {
+      const smEl = this.getStyleEl(this.getRowEl(editor));
+      smEl.style.display = 'none';
+    },
+  });
+  var blockManager = editor.BlockManager;
+
+  // 'my-first-block' is the ID of the block
+  blockManager.add('my-first-block', {
+    label: 'Simple block',
+    content: '<div class="my-block">This is a simple block</div>',
+  });
+  blockManager.add('my-second-block', {
+    label: '<b>Header</b>',
+    content: `<div>
+    <div >
+      <img src="" width="258" height="169" alt=""/></div>
+    <div>
+    <h1>  Organisation Name </h1>
+    <p> About Organisation </p>
+    <p> Address </p>
+    <p>Telephone|Email</p>
+    </div>
+  </div>`,});
+
+  this.editor.setComponents(remoteData['gjs-components']);
+this.editor.setStyle(remoteData['gjs-styles']);
+          </script>
+          <style>
+                          /* Let's highlight canvas boundaries */
+              #gjs {
+              border: 3px solid #444;
+              }
+
+              /* Reset some default styling */
+              .gjs-cv-canvas {
+              top: 0;
+              width: 100%;
+              height: 100%;
+              }
+              .gjs-block {
+                width: auto;
+                height: auto;
+                min-height: auto;
+                color: aquamarine;
+              }
+              .panel__top {
+                padding: 0;
+                width: 100%;
+                display: flex;
+                position: initial;
+                justify-content: center;
+                justify-content: space-between;
+              }
+              .panel__basic-actions {
+                position: initial;
+              }
+              .editor-row {
+                display: flex;
+                justify-content: flex-start;
+                align-items: stretch;
+                flex-wrap: nowrap;
+                height: 300px;
+              }
+
+              .editor-canvas {
+                flex-grow: 1;
+              }
+
+              .panel__right {
+                flex-basis: 230px;
+                position: relative;
+                overflow-y: auto;
+              }
+              .panel__switcher {
+                position: initial;
+              }
+              /* We can remove the border we've set at the beginnig */
+  #gjs {
+    border: none;
+  }
+  /* Theming */
+
+  /* Primary color for the background */
+  .gjs-one-bg {
+    background-color: #78366a;
+  }
+
+  /* Secondary color for the text color */
+  .gjs-two-color {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  /* Tertiary color for the background */
+  .gjs-three-bg {
+    background-color: #ec5896;
+    color: white;
+  }
+
+  /* Quaternary color for the text color */
+  .gjs-four-color,
+  .gjs-four-color-h:hover {
+    color: #ec5896;
+  }
+          </style>
+  </body>
+</html>
