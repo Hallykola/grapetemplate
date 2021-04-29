@@ -4,24 +4,28 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.16.45/grapes.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.16.45/css/grapes.min.css">
         <script src="./grapesjs-blocks-basic.min.js"></script>
+        <link href="./grapesjs-preset-webpage.min.css" rel="stylesheet"/>
+        <script src="./grapesjs-preset-webpage.min.js"></script>
     </head>
     <body>
-      <div class="panel__top">
+      <!-- <div class="panel__top">
         <div class="panel__basic-actions"></div>
         <div class="panel__switcher"></div>
-      </div>    
+      </div>     -->
       <div class="editor-row">
         <div class="editor-canvas">
           <div id="gjs"></div>
         </div>
-        <div class="panel__right">
-          <div class="layers-container"></div>
-          <div class="styles-container"></div>
-        </div>
-      </div>
-      <div id="blocks">
+        
 
+        <!-- <div class="panel__right">
+          <div class="layers-container"></div>
+        <div class="styles-container"></div>
+        </div> -->
       </div>
+      <!-- <div id="blocks">
+
+      </div> -->
           
           
           
@@ -32,17 +36,30 @@
             // Get the content for the canvas directly from the element
             // As an alternative we could use: `components: '<h1>Hello World Component!</h1>'`,
             
-              plugins: ["gjs-blocks-basic"],
+              plugins: ["gjs-blocks-basic",'gjs-preset-webpage'],
               pluginsOpts: {
                 "gjs-blocks-basic": {
                   /* ...options */
                   blocks: ['column1', 'column2', 'column3', 'column3-7', 'text', 'image','map']
-                }
+                },
+                'gjs-preset-webpage': {
+          // options
+          blocks: [],
+          modalImportButton: "",
+          textCleanCanvas: "Do you really want to clear canvas and start from scratch? ",
+          importViewerOptions: false,
+          blocksBasicOpts: false,
+          navbarOpts:false,
+          countdownOpts:false,
+          formsOpts:false,
+          exportOpts:false
+        }
               },
               style: '.txt-red{color: red}',
                 fromElement: true,
                 // Size of the editor
-                height: '300px',
+                //height: '300px',
+               
                 width: 'auto',
 
                 storageManager: {
@@ -69,7 +86,11 @@
                   if (isset($_REQUEST['ref'])){
                    echo " urlLoad: '\./load.php?id=".$_REQUEST['ref']."',
                     params: { id: ".$_REQUEST['ref']." },";
-                  }else{
+                  }elseif(isset($_REQUEST['base'])){
+                    echo " urlLoad: '\./load.php?base=".$_REQUEST['base']."',
+                    params: {  id: ".$position."  },";
+                  }
+                  else{
                     echo " urlLoad: '\./load.php?id=".$position."',
                     params: {  id: ".$position."  },";
                   }
@@ -84,139 +105,141 @@
                     'Content-Type': 'application/json'
                   }
                 },
-                layerManager: {
-                  appendTo: '.layers-container'
-                },
+                // layerManager: {
+                //   appendTo: '.layers-container'
+                // },
                   
-                  panels: {
-                    defaults: [{
-                      id: 'layers',
-                      el: '.panel__right',
-                      // Make the panel resizable
-                      resizable: {
-                        maxDim: 350,
-                        minDim: 200,
-                        tc: 0, // Top handler
-                        cl: 1, // Left handler
-                        cr: 0, // Right handler
-                        bc: 0, // Bottom handler
-                        // Being a flex child we need to change `flex-basis` property
-                        // instead of the `width` (default)
-                        keyWidth: 'flex-basis',
-                      },
-                    },
-                    {
-                    id: 'panel-switcher',
-                    el: '.panel__switcher',
-                    buttons: [{
-                        id: 'show-layers',
-                        active: true,
-                        label: 'Layers',
-                        command: 'show-layers',
-                        // Once activated disable the possibility to turn it off
-                        togglable: false,
-                      }, {
-                        id: 'show-style',
-                        active: true,
-                        label: 'Styles',
-                        command: 'show-styles',
-                        togglable: false,
-                    }
-                    ]},
-                  ]
-                  },
-                  selectorManager: {
-      appendTo: '.styles-container'
-    },
-    styleManager: {
-      appendTo: '.styles-container',
-      sectors: [{
-          name: 'Dimension',
-          open: false,
-          // Use built-in properties
-          buildProps: ['width', 'min-height', 'padding'],
-          // Use `properties` to define/override single property
-          properties: [
-            {
-              // Type of the input,
-              // options: integer | radio | select | color | slider | file | composite | stack
-              type: 'integer',
-              name: 'The width', // Label for the property
-              property: 'width', // CSS property (if buildProps contains it will be extended)
-              units: ['px', '%'], // Units, available only for 'integer' types
-              defaults: 'auto', // Default value
-              min: 0, // Min value, available only for 'integer' types
-            }
-          ]
-        },{
-          name: 'Extra',
-          open: false,
-          buildProps: ['background-color', 'box-shadow', 'custom-prop'],
-          properties: [
-            {
-              id: 'custom-prop',
-              name: 'Custom Label',
-              property: 'font-size',
-              type: 'select',
-              defaults: '32px',
-              // List of options, available only for 'select' and 'radio'  types
-              options: [
-                { value: '12px', name: 'Tiny' },
-                { value: '18px', name: 'Medium' },
-                { value: '32px', name: 'Big' },
-              ],
-          }
-          ]
-        }]
-    },
+                  // panels: {
+                  //   defaults: [{
+                  //     id: 'layers',
+                  //     el: '.panel__right',
+                  //     // Make the panel resizable
+                  //     resizable: {
+                  //       maxDim: 350,
+                  //       minDim: 200,
+                  //       tc: 0, // Top handler
+                  //       cl: 1, // Left handler
+                  //       cr: 0, // Right handler
+                  //       bc: 0, // Bottom handler
+                  //       // Being a flex child we need to change `flex-basis` property
+                  //       // instead of the `width` (default)
+                  //       keyWidth: 'flex-basis',
+                  //     },
+                  //   },
+                  //   {
+                  //   id: 'panel-switcher',
+                  //   el: '.panel__switcher',
+                  //   buttons: [{
+                  //       id: 'show-layers',
+                  //       active: true,
+                  //       label: 'Layers',
+                  //       command: 'show-layers',
+                  //       // Once activated disable the possibility to turn it off
+                  //       togglable: false,
+                  //     }, {
+                  //       id: 'show-style',
+                  //       active: true,
+                  //       label: 'Styles',
+                  //       command: 'show-styles',
+                  //       togglable: false,
+                  //   },
+                    
+                  
+                  //   ]},
+                  // ]
+                  // },
+    //               selectorManager: {
+    //   appendTo: '.styles-container'
+    // },
+    // styleManager: {
+    //   appendTo: '.styles-container',
+    //   sectors: [{
+    //       name: 'Dimension',
+    //       open: false,
+    //       // Use built-in properties
+    //       buildProps: ['width', 'min-height', 'padding'],
+    //       // Use `properties` to define/override single property
+    //       properties: [
+    //         {
+    //           // Type of the input,
+    //           // options: integer | radio | select | color | slider | file | composite | stack
+    //           type: 'integer',
+    //           name: 'The width', // Label for the property
+    //           property: 'width', // CSS property (if buildProps contains it will be extended)
+    //           units: ['px', '%'], // Units, available only for 'integer' types
+    //           defaults: 'auto', // Default value
+    //           min: 0, // Min value, available only for 'integer' types
+    //         }
+    //       ]
+    //     },{
+    //       name: 'Extra',
+    //       open: false,
+    //       buildProps: ['background-color', 'box-shadow', 'custom-prop'],
+    //       properties: [
+    //         {
+    //           id: 'custom-prop',
+    //           name: 'Custom Label',
+    //           property: 'font-size',
+    //           type: 'select',
+    //           defaults: '32px',
+    //           // List of options, available only for 'select' and 'radio'  types
+    //           options: [
+    //             { value: '12px', name: 'Tiny' },
+    //             { value: '18px', name: 'Medium' },
+    //             { value: '32px', name: 'Big' },
+    //           ],
+    //       }
+    //       ]
+    //     }]
+    // },
 
-                  blockManager: {
-      appendTo: '#blocks',
-      blocks: [
+    //               blockManager: {
+    //   appendTo: '#blocks',
+    //   blocks: [
         
-        {
-          id: 'section', // id is mandatory
-          label: '<b>Section</b>', // You can use HTML/SVG inside labels
-          attributes: { class:'gjs-block-section' },
-          content: `<section>
-            <h1>This is a simple title</h1>
-            <div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
-          </section>`,
-        },
-        {
-          id: 'Two Columns', // id is mandatory
-          label: '<b>2 columns</b>', // You can use HTML/SVG inside labels
-          attributes: { class:'gjs-block-section' },
-          content: `<div class="row" data-gjs-droppable=".row-cell" data-gjs-custom-name="Row">
-        <div class="row-cell" data-gjs-draggable=".row"></div>
-        <div class="row-cell" data-gjs-draggable=".row"></div>
-      </div>`,
-        },
-        {
-          id: 'text',
-          label: 'Texty test',
-          content: '<div data-gjs-type="text">Insert your text here</div>',
-        }, {
-          id: 'image',
-          label: 'Image',
-          // Select the component once it's dropped
-          select: true,
-          // You can pass components as a JSON instead of a simple HTML string,
-          // in this case we also use a defined component type `image`
-          content: { type: 'image' },
-          // This triggers `active` event on dropped components and the `image`
-          // reacts by opening the AssetManager
-          activate: true,
-        }
-      ]
-    },
+    //     {
+    //       id: 'section', // id is mandatory
+    //       label: '<b>Section</b>', // You can use HTML/SVG inside labels
+    //       attributes: { class:'gjs-block-section' },
+    //       content: `<section>
+    //         <h1>This is a simple title</h1>
+    //         <div>This is just a Lorem text: Lorem ipsum dolor sit amet</div>
+    //       </section>`,
+    //     },
+    //     {
+    //       id: 'Two Columns', // id is mandatory
+    //       label: '<b>2 columns</b>', // You can use HTML/SVG inside labels
+    //       attributes: { class:'gjs-block-section' },
+    //       content: `<div class="row" data-gjs-droppable=".row-cell" data-gjs-custom-name="Row">
+    //     <div class="row-cell" data-gjs-draggable=".row"></div>
+    //     <div class="row-cell" data-gjs-draggable=".row"></div>
+    //   </div>`,
+    //     },
+    //     {
+    //       id: 'text',
+    //       label: 'Texty test',
+    //       content: '<div data-gjs-type="text">Insert your text here</div>',
+    //     }, {
+    //       id: 'image',
+    //       label: 'Image',
+    //       // Select the component once it's dropped
+    //       select: true,
+    //       // You can pass components as a JSON instead of a simple HTML string,
+    //       // in this case we also use a defined component type `image`
+    //       content: { type: 'image' },
+    //       // This triggers `active` event on dropped components and the `image`
+    //       // reacts by opening the AssetManager
+    //       activate: true,
+    //     }
+    //   ]
+    // },
               }
 
               );
-              editor.Panels.addPanel({
-    id: 'panel-top',
-    el: '.panel__top',
-  });
+  //             editor.Panels.addPanel({
+  //   id: 'panel-top',
+  //   el: '.panel__top',
+  // });
   editor.Panels.addPanel({
     id: 'basic-actions',
     el: '.panel__basic-actions',
@@ -283,6 +306,8 @@
       smEl.style.display = 'none';
     },
   });
+
+  
   var blockManager = editor.BlockManager;
 
   // 'my-first-block' is the ID of the block
@@ -296,67 +321,81 @@
     <div >
       <img src="" width="258" height="169" alt=""/></div>
     <div>
-    <h1>  Organisation Name </h1>
+    <p>  Organisation Name </p>
     <p> About Organisation </p>
     <p> Address </p>
     <p>Telephone|Email</p>
     </div>
   </div>`,});
+  blockManager.add('my-2column-block', {
+    label: 'Two column block',
+    content: `
+<div style="float: left; width:50%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="float: right; width: 50%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 2</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+`,
+  });
 
-  this.editor.setComponents(remoteData['gjs-components']);
-this.editor.setStyle(remoteData['gjs-styles']);
+  var component = blockManager.add('my-footer-block', {
+    label: 'Footer block',
+    content: `
+<div style="float: left; width:50%; margin-bottom: 0pt;  ">
+<div><h1>[name]<br/> </h1>
+<p><b>[role]</b><br/></p>
+<b>[businessname] </b> 
+</div>
+</div>
+<div style="float: right; width: 50%; margin-bottom: 0pt;  ">
+[buyer] <br/>
+	<p><b>[customer]</b></p>
+</div>
+<div style="clear:both;"> </div>
+`,
+  });
+
+  blockManager.add('green-full-header', {
+    label: 'Green full header',
+    content: `<div >
+  <div style="float: left; width:25%; margin-bottom: 0pt;  "><img src="" width="258" height="169" alt=""/></div>
+  <div style="float: right; width: 70%; margin-bottom: 0pt;  ">
+  <h1>  [businessname] </h1>
+  <p> [about]</p>
+  <p> [address]</p>
+  <p>[telephone]: [phone]|[emailhead]: [email]</p>
+  </div>
+</div>
+<hr/>
+<div style="clear:both;background:#AAD76B;height:30pt; width:100%;"></div>
+<div class="customer" style="clear:both;"><h3>[customerdetails]</h3> <hr/>
+<p>[buyer]<br/>
+[billstreet]<br/>
+[billphone]</p>
+</div>
+<div style="clear:both;font-size:1em; text-align: center;"><h2>[receipt]</h2>
+
+<hr/></div>
+<div style=" float: left; width: 50%; margin-bottom: 0pt; ">
+<b>[receiptno]: </b>[recnumber] <br/> <b>Date Issued: </b>[date] <br/> 
+</div>
+<div style="clear:both;"> </div>`,
+  });
+  
+ 
+ 
+
+
+
           </script>
           <style>
-                          /* Let's highlight canvas boundaries */
-              #gjs {
-              border: 3px solid #444;
-              }
-
-              /* Reset some default styling */
-              .gjs-cv-canvas {
-              top: 0;
-              width: 100%;
-              height: 100%;
-              }
-              .gjs-block {
-                width: auto;
-                height: auto;
-                min-height: auto;
-                color: aquamarine;
-              }
-              .panel__top {
-                padding: 0;
-                width: 100%;
-                display: flex;
-                position: initial;
-                justify-content: center;
-                justify-content: space-between;
-              }
-              .panel__basic-actions {
-                position: initial;
-              }
-              .editor-row {
-                display: flex;
-                justify-content: flex-start;
-                align-items: stretch;
-                flex-wrap: nowrap;
-                height: 300px;
-              }
-
-              .editor-canvas {
-                flex-grow: 1;
-              }
-
-              .panel__right {
-                flex-basis: 230px;
-                position: relative;
-                overflow-y: auto;
-              }
-              .panel__switcher {
-                position: initial;
-              }
-              /* We can remove the border we've set at the beginnig */
-  #gjs {
+                #gjs {
     border: none;
   }
   /* Theming */
