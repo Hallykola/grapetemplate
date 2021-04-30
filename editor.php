@@ -280,32 +280,32 @@
   editor.on('run:export-template', () => console.log('After the command run'));
   editor.on('abort:export-template', () => console.log('Command aborted'));
   // Define commands
-  editor.Commands.add('show-layers', {
-    getRowEl(editor) { return editor.getContainer().closest('.editor-row'); },
-    getLayersEl(row) { return row.querySelector('.layers-container') },
+  // editor.Commands.add('show-layers', {
+  //   getRowEl(editor) { return editor.getContainer().closest('.editor-row'); },
+  //   getLayersEl(row) { return row.querySelector('.layers-container') },
 
-    run(editor, sender) {
-      const lmEl = this.getLayersEl(this.getRowEl(editor));
-      lmEl.style.display = '';
-    },
-    stop(editor, sender) {
-      const lmEl = this.getLayersEl(this.getRowEl(editor));
-      lmEl.style.display = 'none';
-    },
-  });
-  editor.Commands.add('show-styles', {
-    getRowEl(editor) { return editor.getContainer().closest('.editor-row'); },
-    getStyleEl(row) { return row.querySelector('.styles-container') },
+  //   run(editor, sender) {
+  //     const lmEl = this.getLayersEl(this.getRowEl(editor));
+  //     lmEl.style.display = '';
+  //   },
+  //   stop(editor, sender) {
+  //     const lmEl = this.getLayersEl(this.getRowEl(editor));
+  //     lmEl.style.display = 'none';
+  //   },
+  // });
+  // editor.Commands.add('show-styles', {
+  //   getRowEl(editor) { return editor.getContainer().closest('.editor-row'); },
+  //   getStyleEl(row) { return row.querySelector('.styles-container') },
 
-    run(editor, sender) {
-      const smEl = this.getStyleEl(this.getRowEl(editor));
-      smEl.style.display = '';
-    },
-    stop(editor, sender) {
-      const smEl = this.getStyleEl(this.getRowEl(editor));
-      smEl.style.display = 'none';
-    },
-  });
+  //   run(editor, sender) {
+  //     const smEl = this.getStyleEl(this.getRowEl(editor));
+  //     smEl.style.display = '';
+  //   },
+  //   stop(editor, sender) {
+  //     const smEl = this.getStyleEl(this.getRowEl(editor));
+  //     smEl.style.display = 'none';
+  //   },
+  // });
 
   
   var blockManager = editor.BlockManager;
@@ -328,8 +328,8 @@
     </div>
   </div>`,});
   blockManager.add('my-2column-block', {
-    label: 'Two column block',
-    content: `
+    label: 'Two equal column block',
+    content: `<div>
 <div style="float: left; width:50%; margin-bottom: 0pt;  ">
 <div>
 <p>Column 1</p>
@@ -341,8 +341,242 @@
 </div>
 </div>
 <div style="clear:both;"> </div>
+</div>
 `,
   });
+  //
+
+  blockManager.add('my-left-column-block', {
+    label: 'Left column block',
+    content: `<div>
+<div style="float: left; width:50%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+
+  blockManager.add('my-right-column-block', {
+    label: 'Right column block',
+    content: `<div>
+<div style="float: right; width: 50%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+  blockManager.add('my-note-block', {
+    label: 'Note block',
+    content: `<div>
+<div style="float: center;    ">
+<div>
+<h3>Heading</h3>
+<p> Enter note body here <p>
+</div>
+</div>
+
+</div>
+`,
+  });
+
+  blockManager.add('my-2column-block', {
+    label: '2:8 column',
+    content: `<div>
+<div style="float: left; width:20%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="float: right; width: 80%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 2</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+
+  blockManager.add('my-75-25column-block', {
+    label: 'Two Wide and small column',
+    content: `
+    <div>
+<div style="float: left; width:75%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="float: right; width: 25%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 2</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+  blockManager.add('my-65-35column-block', {
+    label: '2:1 column',
+    content: `
+    <div>
+<div style="float: left; width:65%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="float: right; width: 35%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 2</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+  blockManager.add('my-35-65column-block', {
+    label: '1:2 column',
+    content: `
+    <div>
+<div style="float: left; width:35%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="float: right; width: 65%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 2</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+  blockManager.add('my-20-50-30-column-block', {
+    label: '2:5:3 column',
+    content: `<div>
+<div style="float: left; width:20%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="float: left; width: 50%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 2</p>
+</div>
+</div>
+<div style="float: right; width: 30%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 3</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+  blockManager.add('my-30-40-30-column-block', {
+    label: '3:4:3 column',
+    content: `<div>
+<div style="float: left; width:30%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 1</p>
+</div>
+</div>
+<div style="float: left; width: 40%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 2</p>
+</div>
+</div>
+<div style="float: right; width: 30%; margin-bottom: 0pt;  ">
+<div>
+<p>Column 3</p>
+</div>
+</div>
+<div style="clear:both;"> </div>
+</div>
+`,
+  });
+  blockManager.add('my-color-bar', {
+    label: 'Color bar',
+    content: `
+    <div style="clear:both;background:#AAD76B;height:30pt; width:100%;"></div>`,
+  });
+  blockManager.add('my-image-header', {
+    label: 'Image Header',
+    content: `
+    
+    <div style="
+    padding-top: 80px;
+  background-color: #cccccc; 
+  height: 200px; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  background-size: cover;">
+  <div style="">
+ 
+
+    <h1 style=" margin-left: auto; margin-right: auto;margin-bottom: auto; text-align:center;border:3px solid red;width:40%;"
+    > Header</h1>
+   </div>
+    </div>
+    `,
+  });
+  
+
+blockManager.add('my-table-block', {
+    label: 'Table',
+    content: `
+    <table class="zebra" align="center">
+<caption class="tablecaption" align="bottom">[note]
+</caption>
+
+<thead>
+  <tr>
+    <th width="10.1" height="32">[quantity]</th>
+    <td width="40%">[description]</td>
+    <td width="18.2%">[unitprice]</td>
+    <td width="18.1%" >['amount'] ([currency]) </td>
+    </tr>
+</thead>
+<tfoot>
+ 
+
+<tr>
+    <th height="28"></th>
+    <td></td>
+    <td style="font-size:12pt; color: #FF2301;">[totalhead]</td>
+    <td class="cost" style="font-size:20pt; color: #FF2301;"><b>[currency]</b></td>
+  </tr>
+</tfoot>
+<tbody>
+ <tr class="odd">
+    <td height="28">['qty'.$i]</td>
+    <td>['item'.$i]</td>
+    <td>['uprice'.$i]</td>
+    <td >['amount'.$i]</td></tr>
+
+    <tr class="even">
+    <td height="28">['qty'.$i]</td>
+    <td>['item'.$i]</td>
+    <td>['uprice'.$i]</td>
+    <td >['amount'.$i]</td></tr>
+
+ </tbody>
+</table>`,
+  });
+
+  blockManager.add('my-horizontal-rule', {
+    label: 'Horizontal Line',
+    content: `
+    <hr/>`,
+  });
+
+  //
 
   var component = blockManager.add('my-footer-block', {
     label: 'Footer block',

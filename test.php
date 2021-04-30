@@ -35,7 +35,7 @@ $data = $result->fetch_assoc();
 //  echo "<br/>";
 //  echo $response['gjs-html'];
 
-//  ob_start();
+  ob_start();
 
  $template = "
  <html>
@@ -51,20 +51,51 @@ $data = $result->fetch_assoc();
  </html>
  ";
 //  //echo $response['gjs-assets'] ;
-//  $template = str_replace("[businessname]","Teleprinter",$template);
-//  $template = str_replace("[about]","Business Softwares",$template);
-//  $template = str_replace("[phone]","08068858953",$template);
-//  $template = str_replace("[email]","info@teleprintersoftwares.com",$template);
-//  $template = str_replace("[buyer]","Olawale",$template);
-//  $template = str_replace("[billstreet]","Iyana Ipaja",$template);
-//  $template = str_replace("[billphone]","080888666",$template);
+ $template = str_replace("[businessname]","Teleprinter",$template);
+ $template = str_replace("[about]","Business Softwares",$template);
+ $template = str_replace("[phone]","08068858953",$template);
+ $template = str_replace("[email]","info@teleprintersoftwares.com",$template);
+ $template = str_replace("[buyer]","Olawale",$template);
+ $template = str_replace("[billstreet]","Iyana Ipaja",$template);
+ $template = str_replace("[billphone]","080888666",$template);
 
- //echo $template;
+ echo $template;
 
  $html=ob_get_clean();
+ $dom = new DOMDocument();
+ $dom->loadHTML($html);
+ $xpath = new DOMXPath($dom);
+ $table = $xpath->query('//table');
+ $oddrow = $xpath->query('//table//tr[@class="odd"]');
+ $evenrow = $xpath->query('//table//tr[@class="even"]');
+echo $evenrow->item(0)->textContent;
+function setNode($node, $a, $b, $c, $d){
+    $node->childNodes[0]->nodeValue = $a ;
+    $node->childNodes[1]->nodeValue = $b;
+    $node->childNodes[2]->nodeValue = $c;
+    $node->childNodes[3]->nodeValue = $d;
+}
+$even = false;
+$name = ["rice","beans","yam","gaari","sugar"];
+for ($i = 0; $i<5; $i++){
+    if($even){
+        $newrow = $evenrow->item(0)->cloneNode(true);
+    }else{
+        $newrow = $oddrow->item(0)->cloneNode(true);
+      
+    }
+    setNode($newrow,"one",$name[$i],"three", "Four");
+ $table->item(0)->appendChild($newrow);
+ $even = !$even;
+}
+$oddrow->item(0)->parentNode->removeChild($oddrow->item(0));
+$evenrow->item(0)->parentNode->removeChild($evenrow->item(0));
 
+
+
+$html = @ $dom->saveHTML();
 $mpdf = new \Mpdf\Mpdf();
-$mpdf->WriteHTML($template);
+$mpdf->WriteHTML($html);
 $mpdf->Output();
 
 
